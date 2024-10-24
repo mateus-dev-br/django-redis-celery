@@ -7,6 +7,7 @@ from .models import EmailTask
 
 def home_view(request):
     form = MessageForm()
+    email_tasks = EmailTask.objects.all().order_by('-created_at') 
 
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -22,7 +23,8 @@ def home_view(request):
 
 
     context = {
-        'form': form
+        'form': form,
+        'email_tasks': email_tasks,
     }
 
     return render(request, 'home.html', context)

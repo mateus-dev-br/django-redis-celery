@@ -4,40 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Email Sender</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Test</h1>
+            <h1>Email Sender Application</h1>
         </header>
         <main>
-            <h2>Email sender</h2>
+            <h2>Send Email</h2>
             {% if messages %}
                 {% for message in messages %}
                     <div class="message {{ message.tags }}">
-                    {{ message }}
+                        {{ message }}
                     </div>
                 {% endfor %}
             {% endif %}
-            <form method="post">
+            <form method="post" class="email-form">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Send</button>
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn">Send</button>
             </form>
-            <h2>Mensagens Enviadas</h2>
-            <ul>
-                {% for message in messages %}
-                    <li><strong>{{ message.subject }}</strong>: {{ message.message }} ({{ message.emails }})</li>
+            <h2>Sent Messages</h2>
+            <ul class="messages-list">
+                {% for task in email_tasks %}
+                    <li>
+                        <strong>{{ task.subject }}</strong>: {{ task.message }} ({{ task.emails }}) 
+                        {% if task.is_sent %} - Sent{% else %} - Not Sent{% endif %}
+                    </li>
                 {% empty %}
-                    <li>Nenhuma mensagem ainda.</li>
+                    <li>No messages sent yet.</li>
                 {% endfor %}
             </ul>
         </main>
         <footer>
-            <p>2024 - Django / Celery / Redis</p>
+            <p>&copy; 2024 - Django / Celery / Redis</p>
         </footer>
     </div>
 </body>
