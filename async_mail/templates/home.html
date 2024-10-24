@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Test</h1>
+        </header>
+        <main>
+            <h2>Email sender</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                    {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Send</button>
+            </form>
+            <h2>Mensagens Enviadas</h2>
+            <ul>
+                {% for message in messages %}
+                    <li><strong>{{ message.subject }}</strong>: {{ message.message }} ({{ message.emails }})</li>
+                {% empty %}
+                    <li>Nenhuma mensagem ainda.</li>
+                {% endfor %}
+            </ul>
+        </main>
+        <footer>
+            <p>2024 - Django / Celery / Redis</p>
+        </footer>
+    </div>
+</body>
+</html>
