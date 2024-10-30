@@ -1,6 +1,6 @@
 amqp==5.2.0
 asgiref==3.7.2
-celery==5.3.0
+celery==5.2.7
 Django==3.2.25
 python-decouple==3.8
 redis==5.0.8
