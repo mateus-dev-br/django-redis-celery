@@ -34,7 +34,7 @@ jobs:
       run: |
         python manage.py test
 
-    #Configurar credenciais AWS para acessar o ECR
+    #Configurar credenciais AWS para acessar o ECR 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
