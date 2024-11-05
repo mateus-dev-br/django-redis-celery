@@ -1,32 +1,35 @@
-# Use uma imagem base Python com Debian para mais controle de pacotes e compatibilidade
+# Use uma imagem base leve
 FROM python:3.9-slim
 
-# Defina uma variável de ambiente que desabilite o buffering para melhor visualização dos logs
+# Desabilita o buffering para melhor visualização de logs
 ENV PYTHONUNBUFFERED=1
 
-# Configuração de diretório de trabalho
+# Define o diretório de trabalho
 WORKDIR /app
 
 # Copia apenas o requirements.txt (boa prática para build caching)
 COPY requirements.txt /app/
-
-# Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia todo o código da aplicação para dentro do container
+# Instala o Gunicorn para Django e Celery para tarefas assíncronas
+RUN pip install gunicorn
+
+# Copia o código da aplicação
 COPY . /app
 
-# Configurações de segurança e cache para o Celery
-RUN adduser --disabled-password celery_user \
-    && chown -R celery_user:celery_user /app \
-    && mkdir -p /var/log/celery /var/run/celery \
+# Cria usuários sem privilégios para maior segurança
+RUN adduser --disabled-password appuser \
+    && adduser --disabled-password celery_user \
+    && chown -R appuser:appuser /app \
+    && mkdir -p /var/log/gunicorn /var/run/gunicorn /var/log/celery /var/run/celery \
+    && chown -R appuser:appuser /var/log/gunicorn /var/run/gunicorn \
     && chown -R celery_user:celery_user /var/log/celery /var/run/celery
 
-# Usuário de execução do Celery para segurança
-USER celery_user
+# Usa o usuário sem privilégios para rodar o Gunicorn
+USER appuser
 
-# Porta padrão do Django
+# Expõe a porta 8000 para o Gunicorn
 EXPOSE 8000
 
-# Comando de entrada
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Comando de entrada para o Gunicorn (será sobrescrito para o Celery no docker-compose)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi:application", "--workers", "4"]

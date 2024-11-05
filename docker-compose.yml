@@ -1,9 +1,10 @@
+version: '3.8'
 
 services:
   web:
     build: .
     container_name: django_app
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn project.wsgi:application --bind 0.0.0.0:8000 --workers 4
     volumes:
       - .:/app
     ports:
@@ -33,4 +34,4 @@ services:
       - .env
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
-
+    user: celery_user
