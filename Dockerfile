@@ -32,4 +32,4 @@ USER appuser
 EXPOSE 8000
 
 # Comando de entrada para o Gunicorn (será sobrescrito para o Celery no docker-compose)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi:application", "--workers", "4"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi:application", "--workers", "4", "--timeout", "120"]
